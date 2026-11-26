@@ -1,24 +1,26 @@
 # Spotify on Asahi Linux (muvm + Box64)
 
-Apple Silicon(Fedora Asahi Remix)에서 공식 Spotify Linux `x86_64` 데스크톱 앱을 `muvm`과 `Box64`로 안정적으로 실행하기 위한 **래퍼 스크립트, Box64 안정화 패치, 오디오 설정 모음**입니다.
+**English** | [한국어](README.ko.md)
 
-> **저작권 안내 (Copyright Notice)**
-> 이 저장소는 Spotify의 독점 바이너리, 라이브러리, 에셋을 **일절 포함·재배포하지 않습니다**.
-> 사용자는 아래 안내에 따라 Spotify 공식 저장소에서 원본 `.deb` 패키지를 직접 내려받아 로컬에서 설치해야 합니다.
-> Box64 소스 역시 빌드 시 공식 업스트림(`ptitSeb/box64`)에서 직접 내려받습니다.
+Wrapper scripts, Box64 stability patches, and lossless PipeWire audio configurations for running the official Spotify Linux `x86_64` desktop client on Apple Silicon (Fedora Asahi Remix) via `muvm` and `Box64`.
 
----
-
-## 면책 조항 (Disclaimer)
-
-- **Spotify와의 무관 및 격리 (Non-Affiliation)**: 이 프로젝트는 Spotify AB 및 그 계열사와 어떠한 제휴, 후원, 보증, 공식 관계도 없는 독립적인 비공식 실행 스크립트·설정 모음입니다. "Spotify" 명칭·상표·로고에 대한 모든 권리는 Spotify AB에 있습니다.
-- **계정 정지 및 이용 제한 위험 (Account / ToS Risk)**: 비공식 실행 환경(가상화·에뮬레이션)에서 클라이언트를 구동함으로써 발생할 수 있는 Spotify 이용약관(ToS) 해석 문제, 서비스 이용 제한, 계정 정지 등에 대해 제작자 및 기여자는 어떠한 책임도 지지 않습니다. 사용 여부와 그 결과는 전적으로 사용자 본인의 판단과 책임입니다.
-- **오류 및 손실 면책 (No Warranty & Limitation of Liability)**: 본 프로젝트의 모든 스크립트와 설정은 Apache License 2.0에 따라 **"있는 그대로(AS IS)"** 제공됩니다. 실행 오류, 앱 비정상 종료(튕김), 로컬 캐시·데이터 손실, 시스템 오작동, 오디오 설정 변경으로 인한 문제 등 직·간접적 손실에 대해 어떠한 보증이나 법적 책임도 지지 않습니다.
-- **AI 작성 코드 고지 (AI-Generated Code)**: 이 저장소의 실행 스크립트, 패치 및 문서는 AI 코딩 도구의 도움을 받아 작성·검토되었습니다. 실제 환경에 적용하기 전에 스크립트 내용을 직접 확인하시기 바랍니다.
+> **Copyright Notice**
+> This repository does **NOT** include or redistribute any proprietary Spotify binaries, libraries, or assets.
+> Users must download the official `.deb` package directly from Spotify's official repository and extract it locally.
+> Box64 source code is also fetched directly from upstream (`ptitSeb/box64`) during build.
 
 ---
 
-## 사전 준비 (Fedora Asahi Remix)
+## Disclaimer
+
+- **Non-Affiliation with Spotify**: This project is an independent, unofficial collection of wrapper scripts and configuration templates. It is NOT affiliated with, endorsed by, sponsored by, or officially connected with Spotify AB or any of its affiliates. All rights to the "Spotify" name, trademarks, and logos belong to Spotify AB.
+- **Account Suspension / Terms of Service Risk**: Running the client in an unofficial virtualized/emulated environment may carry risks regarding Spotify's Terms of Service, including service restrictions or account suspension. The authors and contributors assume no responsibility for any such outcomes; use is strictly at your own risk.
+- **No Warranty & Limitation of Liability**: All scripts, patches, and configurations in this repository are provided **"AS IS"** under the Apache License 2.0, without warranties of any kind. The authors and contributors are not liable for any direct or indirect damages, including crashes, errors, local cache/data loss, system malfunction, or audio configuration issues.
+- **AI-Generated Code Disclosure**: The scripts, patches, and documentation in this repository were written and reviewed with the assistance of AI coding tools. Please review the code carefully before running it on your system.
+
+---
+
+## Prerequisites (Fedora Asahi Remix)
 
 ```sh
 sudo dnf install -y \
@@ -29,68 +31,68 @@ sudo dnf install -y \
 
 ---
 
-## 설치 방법
+## Installation
 
-### 1. Box64 빌드 및 `[spotify]` 안정화 패치 적용
+### 1. Build Box64 and apply the `[spotify]` stability patch
 
 ```sh
 ./build-box64.sh
 ```
 
-- 공식 `ptitSeb/box64` (`v0.4.4`)를 `vendor/box64`에 내려받아 `ARM64` 타깃으로 빌드합니다.
-- `patches/box64rc-spotify.patch`를 적용해 `runtime/box64.box64rc`를 생성합니다.
+- Clones upstream `ptitSeb/box64` (`v0.4.4`) into `vendor/box64` and builds for `ARM64`.
+- Applies `patches/box64rc-spotify.patch` to generate `runtime/box64.box64rc`.
 
-### 2. 공식 Spotify Linux `x86_64` 패키지 다운로드
+### 2. Download the official Spotify Linux `x86_64` package
 
-Spotify 공식 Linux 저장소에서 최신 `spotify-client_*_amd64.deb` 파일을 직접 다운로드합니다.
+Download the latest `spotify-client_*_amd64.deb` directly from Spotify's official Linux repository:
 
-- 공식 저장소 목록: https://repository.spotify.com/pool/non-free/s/spotify-client/
+- Official repository index: https://repository.spotify.com/pool/non-free/s/spotify-client/
 
-예시 (최신 파일명은 위 링크에서 확인):
+Example (check the link above for the latest filename):
 
 ```sh
 curl -LO https://repository.spotify.com/pool/non-free/s/spotify-client/spotify-client_<VERSION>_amd64.deb
 ```
 
-### 3. 설치 스크립트 실행
+### 3. Run the installer
 
 ```sh
-# 기본 설치 (Spotify 추출 + systemd 사용자 서비스 + 런처 + 앱 메뉴 아이콘)
+# Standard install (extracts Spotify + installs systemd user service, launcher, and desktop entry)
 ./install.sh --deb ./spotify-client_*.deb
 
-# PipeWire 44.1 kHz 무손실(리샘플링 제거) 설정까지 함께 설치
+# Also install PipeWire 44.1 kHz native clock switching & high-quality resampler configs
 ./install.sh --deb ./spotify-client_*.deb --with-pipewire
 ```
 
 ---
 
-## 실행 및 관리
+## Usage & Management
 
 ```sh
-./run.sh                                          # 또는 앱 메뉴의 Spotify / 터미널에서 spotify
+./run.sh                                          # or launch "Spotify" from app menu / run `spotify`
 systemctl --user restart spotify-asahi.service
 systemctl --user stop spotify-asahi.service
 journalctl --user -u spotify-asahi.service -n 80 --no-pager
 ```
 
-### 제거
+### Uninstall
 
 ```sh
-./uninstall.sh                  # 서비스, 런처, 데스크톱 항목 제거
-./uninstall.sh --remove-pipewire # PipeWire 설정까지 제거
+./uninstall.sh                   # removes user service, launcher, and desktop entry
+./uninstall.sh --remove-pipewire # also removes installed PipeWire configs
 ```
 
 ---
 
-## 포함된 안정성·음질 개선
+## Included Stability & Audio Improvements
 
-1. **PTY 슈퍼바이저 (`pty-run.py`)**: Python `pty.spawn()`의 `EAGAIN` 조기 종료(`SIGHUP`) 및 `stdout` 백프레셔 데드락 문제를 제거하고, `SIGTERM`/`SIGINT` 시그널을 자식 프로세스 그룹에 안전하게 전달합니다.
-2. **Box64 CEF/V8 안정화 패치 (`patches/box64rc-spotify.patch`)**: `STRONGMEM=3`, `SAFEFLAGS=2`, `CALLRET=0`, `INTERP_SIGNAL=1`, `FASTROUND=0`, `FASTNAN=0`, `AVX=0`, `MAXCPU=4`, `DYNACACHE=0` 적용.
-3. **게스트 런처 (`runtime/run-guest.sh`)**: `--disable-dev-shm-usage`로 `muvm` 내 `/dev/shm` 부족 `SIGBUS` 크래시 방지 및 `LD_LIBRARY_PATH` 보존.
-4. **무손실 오디오 (`pipewire/`)**: PipeWire `clock.allowed-rates`에 `44100`을 활성화해 44.1 kHz Lossless FLAC 재생 시 리샘플링을 제거하고, 혼합 재생 시에도 `resample.quality = 10`을 유지합니다.
+1. **Hardened PTY Supervisor (`pty-run.py`)**: Replaces Python's `pty.spawn()` to avoid premature `SIGHUP` exits on non-blocking `EAGAIN` and `stdout` backpressure deadlocks, while forwarding `SIGTERM`/`SIGINT`/`SIGHUP` cleanly to the child process group.
+2. **Box64 CEF/V8 Stability Patch (`patches/box64rc-spotify.patch`)**: Applies conservative DynaRec settings (`STRONGMEM=3`, `SAFEFLAGS=2`, `CALLRET=0`, `INTERP_SIGNAL=1`, `FASTROUND=0`, `FASTNAN=0`, `AVX=0`, `MAXCPU=4`, `DYNACACHE=0`) to reduce intermittent ARM64 memory-ordering and JIT crashes.
+3. **Guest Launcher (`runtime/run-guest.sh`)**: Adds `--disable-dev-shm-usage` to prevent `/dev/shm` exhaustion `SIGBUS` crashes inside `muvm`, and preserves existing `LD_LIBRARY_PATH` / `BOX64_LD_LIBRARY_PATH`.
+4. **Lossless Audio (`pipewire/`)**: Enables `44100` Hz in PipeWire `clock.allowed-rates` so 44.1 kHz Lossless FLAC plays natively without resampling, and sets `resample.quality = 10` when mixed sample rates play simultaneously.
 
-## 라이선스
+## License
 
-- 본 저장소의 스크립트 및 설정 파일: [Apache License 2.0](LICENSE) ([NOTICE](NOTICE) 참고)
-- Spotify 클라이언트: Spotify 독점 라이선스 (본 저장소에 미포함)
-- Box64: MIT License (업스트림에서 직접 빌드)
+- Scripts, patches, and configs in this repository: [Apache License 2.0](LICENSE) (see [NOTICE](NOTICE))
+- Spotify client: Proprietary license by Spotify AB (not included in this repository)
+- Box64: MIT License (built directly from upstream)
