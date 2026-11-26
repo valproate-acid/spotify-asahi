@@ -1,0 +1,35 @@
+#!/bin/sh
+set -eu
+case "${1:-}" in
+  --version) echo 'Spotify on Asahi Linux (muvm + Box64)'; exit 0 ;;
+  --help) echo 'spotify — 공식 Spotify 데스크톱 앱 실행 (Asahi Linux)'; exit 0 ;;
+esac
+
+if [ "$#" -gt 0 ]; then
+  was_active=0
+  if systemctl --user is-active --quiet spotify-asahi.service; then
+    was_active=1
+  else
+    systemctl --user start spotify-asahi.service
+  fi
+
+  # Avoid racing two muvm/Spotify instances on the same profile during cold boot.
+  if [ "$was_active" -eq 0 ]; then
+    i=0
+    while [ "$i" -lt 10 ]; do
+      if systemctl --user is-active --quiet spotify-asahi.service; then
+        sleep 2
+        break
+      fi
+      sleep 1
+      i=$((i + 1))
+    done
+  fi
+
+  lock_dir="${XDG_RUNTIME_DIR:-/tmp}"
+  exec flock -n "$lock_dir/spotify-asahi-open.lock" \
+    systemd-run --user --collect --quiet --unit="spotify-asahi-open-$$" \
+    /usr/bin/python3 "@PROJECT_DIR@/pty-run.py" "$@"
+fi
+
+exec systemctl --user start spotify-asahi.service

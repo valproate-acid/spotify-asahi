@@ -1,0 +1,13 @@
+.tools/
+.build/
+vendor/
+runtime/usr/
+runtime/bin/
+runtime/native/
+runtime/compat/
+runtime/box64.box64rc
+runtime/LICENSE.box64
+*.deb
+*.snap
+*.log
+__pycache__/

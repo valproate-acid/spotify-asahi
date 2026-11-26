@@ -1,0 +1,18 @@
+[Unit]
+Description=Spotify desktop on Asahi Linux
+StartLimitIntervalSec=120
+StartLimitBurst=3
+
+[Service]
+Type=simple
+WorkingDirectory=@PROJECT_DIR@
+Environment=SPOTIFY_PROFILE=@SPOTIFY_PROFILE@
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/python3 @PROJECT_DIR@/pty-run.py
+Restart=on-failure
+RestartSec=5
+UMask=0077
+KillMode=mixed
+TimeoutStopSec=15
+StandardOutput=journal
+StandardError=journal

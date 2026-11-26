@@ -1,0 +1,17 @@
+spotify-asahi
+Copyright 2026 spotify-asahi contributors
+
+This product includes wrapper scripts, configuration templates, and Box64
+tuning patches licensed under the Apache License, Version 2.0.
+
+Third-Party Notices & Non-Affiliation:
+1. Spotify:
+   This project is an independent, unofficial community wrapper and is NOT
+   affiliated with, endorsed by, sponsored by, or officially connected with
+   Spotify AB or any of its subsidiaries or affiliates. "Spotify" and related
+   marks are registered trademarks of Spotify AB. No proprietary Spotify
+   binaries, libraries, or assets are distributed with this repository.
+
+2. Box64:
+   Box64 (https://github.com/ptitSeb/box64) is licensed under the MIT License
+   and is fetched directly from upstream by the user during build.
