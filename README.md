@@ -2,6 +2,9 @@
 
 **English** | [한국어](README.ko.md)
 
+> [!WARNING]
+> **Beta / Experimental Software**: This project is currently in **beta**. Unexpected crashes, freezes, audio glitches, or breaking changes may occur, especially across Spotify client or Box64 updates. Use at your own risk and back up important data before use.
+
 Wrapper scripts, Box64 stability patches, and lossless PipeWire audio configurations for running the official Spotify Linux `x86_64` desktop client on Apple Silicon (Fedora Asahi Remix) via `muvm` and `Box64`.
 
 > **Copyright Notice**

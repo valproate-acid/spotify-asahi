@@ -2,6 +2,9 @@
 
 [English](README.md) | **한국어**
 
+> [!WARNING]
+> **베타 / 실험적 소프트웨어 (Beta)**: 이 프로젝트는 현재 **베타 단계**입니다. 예기치 않은 앱 튕김, 멈춤, 오디오 이상 또는 Spotify/Box64 업데이트에 따른 호환성 문제가 발생할 수 있습니다. 사용 전 이 점을 충분히 인지하고 본인 책임 하에 사용해 주세요.
+
 Apple Silicon(Fedora Asahi Remix)에서 공식 Spotify Linux `x86_64` 데스크톱 앱을 `muvm`과 `Box64`로 안정적으로 실행하기 위한 **래퍼 스크립트, Box64 안정화 패치, 오디오 설정 모음**입니다.
 
 > **저작권 안내 (Copyright Notice)**
