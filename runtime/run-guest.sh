@@ -16,7 +16,9 @@ if [ ! -x "$spotify_bin" ]; then
 fi
 
 export LD_LIBRARY_PATH="$base/native/usr/lib64${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
-export BOX64_LD_LIBRARY_PATH="/run/fex-emu/rootfs/usr/lib64:/run/fex-emu/rootfs/lib64${BOX64_LD_LIBRARY_PATH:+:$BOX64_LD_LIBRARY_PATH}"
+if [ -d /run/fex-emu/rootfs/usr/lib64 ]; then
+    export BOX64_LD_LIBRARY_PATH="/run/fex-emu/rootfs/usr/lib64:/run/fex-emu/rootfs/lib64${BOX64_LD_LIBRARY_PATH:+:$BOX64_LD_LIBRARY_PATH}"
+fi
 export BOX64_RCFILE="$base/box64.box64rc"
 export BOX64_LOG="${BOX64_LOG:-1}"
 

@@ -58,21 +58,57 @@ def _terminate_process_group(proc: subprocess.Popen[bytes], sig: int) -> None:
             pass
 
 
+def _resolve_command(guest_script: Path, args: list[str]) -> tuple[list[str], bool] | None:
+    """Resolve launch command and whether a PTY is required.
+
+    SPOTIFY_ASAHI_MODE:
+      - auto (default): use muvm on >4KB-page kernels (e.g. Asahi 16KB) or when muvm exists;
+        fall back to direct Box64 execution on 4KB ARM64 Linux if muvm is absent.
+      - muvm: require /usr/bin/muvm.
+      - direct: run guest_script directly without muvm (4KB ARM64 Linux, untested).
+    """
+    mode = os.environ.get("SPOTIFY_ASAHI_MODE", "auto").strip().lower()
+    page_size = os.sysconf("SC_PAGESIZE")
+    has_muvm = MUVM_BIN.is_file() and os.access(MUVM_BIN, os.X_OK)
+
+    if mode == "direct":
+        return ([str(guest_script), *args], False)
+    if mode == "muvm":
+        if not has_muvm:
+            sys.stderr.write(f"pty-run: executable not found: {MUVM_BIN}\n")
+            return None
+        return ([str(MUVM_BIN), "-i", str(guest_script), *args], True)
+
+    # auto mode
+    if has_muvm:
+        return ([str(MUVM_BIN), "-i", str(guest_script), *args], True)
+    if page_size > 4096:
+        sys.stderr.write(
+            f"pty-run: host page size is {page_size}B (requires {MUVM_BIN} for 4KB guest)\n"
+        )
+        return None
+    return ([str(guest_script), *args], False)
+
+
 def main() -> int:
     root = Path(__file__).resolve().parent
     guest_script = root / "runtime/run-guest.sh"
 
-    if not MUVM_BIN.is_file() or not os.access(MUVM_BIN, os.X_OK):
-        sys.stderr.write(f"pty-run: executable not found: {MUVM_BIN}\n")
-        return 127
     if not guest_script.is_file() or not os.access(guest_script, os.X_OK):
         sys.stderr.write(f"pty-run: executable not found: {guest_script}\n")
         return 127
 
+    resolved = _resolve_command(guest_script, sys.argv[1:])
+    if resolved is None:
+        return 127
+    cmd, use_pty = resolved
+
+    if not use_pty:
+        os.execv(cmd[0], cmd)
+
     master_fd, slave_fd = pty.openpty()
     _disable_echo(slave_fd)
 
-    cmd = [str(MUVM_BIN), "-i", str(guest_script), *sys.argv[1:]]
     proc: subprocess.Popen[bytes] | None = None
     shutdown_deadline: float | None = None
 

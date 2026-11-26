@@ -29,6 +29,14 @@ sudo dnf install -y \
   libayatana-appindicator-gtk3
 ```
 
+### 일반 ARM64 Linux 환경 (4KB 페이지 커널 — 미검증)
+
+> **미검증 안내**: 이 프로젝트는 **Fedora Asahi Remix (Apple Silicon, 16KB 페이지 커널 + `muvm`)** 환경에서만 개발·검증되었습니다.
+> **일반적인 4KB 페이지 ARM64 Linux** (예: Raspberry Pi, 일반 ARM64 노트북/SBC 등)에서도 `muvm` 없이 Box64로 직접 실행하는 것은 **구조상 가능하지만, 실제 테스트는 진행되지 않았습니다.**
+>
+> - `pty-run.py`는 4KB 페이지 커널에서 `/usr/bin/muvm`이 없으면 자동으로 직접 실행 모드(`runtime/run-guest.sh`)로 전환됩니다(또는 `SPOTIFY_ASAHI_MODE=direct`로 강제 가능).
+> - 배포판 환경에 따라 Box64가 래핑하지 않는 `x86_64` 공유 라이브러리는 `BOX64_LD_LIBRARY_PATH`로 별도 제공해야 할 수 있습니다.
+
 ---
 
 ## 설치 방법

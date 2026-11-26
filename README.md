@@ -29,6 +29,14 @@ sudo dnf install -y \
   libayatana-appindicator-gtk3
 ```
 
+### General ARM64 Linux (4KB Page Kernel — Untested)
+
+> **Untested Notice**: This project was developed and verified **only on Fedora Asahi Remix (Apple Silicon, 16KB page kernel with `muvm`)**.
+> On **general 4KB-page ARM64 Linux** systems (e.g., Raspberry Pi, ARM64 laptops/SBCs), running Spotify directly via Box64 without `muvm` is **structurally possible**, **but has NOT been tested**.
+>
+> - `pty-run.py` automatically falls back to direct execution (`runtime/run-guest.sh` without `muvm`) on 4KB-page kernels when `/usr/bin/muvm` is not installed (or force it via `SPOTIFY_ASAHI_MODE=direct`).
+> - Depending on your distribution, you may need to supply any unwrapped `x86_64` shared libraries via `BOX64_LD_LIBRARY_PATH`.
+
 ---
 
 ## Installation
